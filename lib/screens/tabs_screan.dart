@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/Providers/favotites_provider.dart';
+import 'package:flutter_challenge/Providers/filter_provdier.dart';
 import 'package:flutter_challenge/Providers/meals_provider.dart';
 import 'package:flutter_challenge/models/meal.dart';
 import 'package:flutter_challenge/screens/category_screen.dart';
@@ -7,13 +8,6 @@ import 'package:flutter_challenge/screens/filter_Screen.dart';
 import 'package:flutter_challenge/screens/meals_screen.dart';
 import 'package:flutter_challenge/widgets/main_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-const kInitialFilters = {
-  Filter.glutenFree: false,
-  Filter.lactoseFree: false,
-  Filter.vegan: false,
-  Filter.vegeterian: false,
-};
 
 class TabsScrean extends ConsumerStatefulWidget {
   const TabsScrean({super.key});
@@ -25,29 +19,13 @@ class TabsScrean extends ConsumerStatefulWidget {
 class _TabsScreanState extends ConsumerState<TabsScrean> {
   int _selectedPageIndex = 0;
 
-  Map<Filter, bool> _selectedFilters = {
-    Filter.glutenFree: false,
-    Filter.lactoseFree: false,
-    Filter.vegan: false,
-    Filter.vegeterian: false,
-  };
-
   void _setScreen(String identifier) {
     // First close the drawer before changing the screen
     Navigator.of(context).pop();
     if (identifier == 'filters') {
-      Navigator.of(context)
-          .push(
-            MaterialPageRoute(
-              builder:
-                  (context) => FilterScreen(currentFilters: _selectedFilters),
-            ),
-          )
-          // After push the new screen, update the filters with the new values from the screen
-          .then(
-            (value) =>
-                setState(() => _selectedFilters = value ?? kInitialFilters),
-          );
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (context) => const FilterScreen()));
     }
   }
 
@@ -61,19 +39,22 @@ class _TabsScreanState extends ConsumerState<TabsScrean> {
   Widget build(BuildContext context) {
     // Get the meals from the provider and filter them
     final meals = ref.watch(mealsProvider);
+
+    final Map<Filters, bool> selectedFilters = ref.watch(filterMeals);
+
     // Filter the meals based on the selected filters
     final availableMeals =
         meals.where((element) {
-          if (_selectedFilters[Filter.glutenFree]! && !element.isGlutenFree) {
+          if (selectedFilters[Filters.glutenFree]! && !element.isGlutenFree) {
             return false;
           }
-          if (_selectedFilters[Filter.lactoseFree]! && !element.isLactoseFree) {
+          if (selectedFilters[Filters.lactoseFree]! && !element.isLactoseFree) {
             return false;
           }
-          if (_selectedFilters[Filter.vegan]! && !element.isVegan) {
+          if (selectedFilters[Filters.vegan]! && !element.isVegan) {
             return false;
           }
-          if (_selectedFilters[Filter.vegeterian]! && !element.isVegetarian) {
+          if (selectedFilters[Filters.vegeterian]! && !element.isVegetarian) {
             return false;
           }
           return true;
