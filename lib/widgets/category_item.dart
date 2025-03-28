@@ -26,11 +26,8 @@ class CategoryItem extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder:
-                (context) => MealsScreen(
-                  title: category.title,
-                  meals: filterDummyMeal,
-                  onToggleFavorite: onToggleFavorite,
-                ),
+                (context) =>
+                    MealsScreen(title: category.title, meals: filterDummyMeal),
           ),
         );
       },

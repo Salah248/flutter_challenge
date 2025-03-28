@@ -4,12 +4,7 @@ import 'package:flutter_challenge/models/meal.dart';
 import 'package:flutter_challenge/widgets/category_item.dart';
 
 class CategoryScreen extends StatelessWidget {
-  const CategoryScreen({
-    super.key,
-    required this.onToggleFavorite,
-    required this.availableMeals,
-  });
-  final void Function(Meal meal)? onToggleFavorite;
+  const CategoryScreen({super.key, required this.availableMeals});
   final List<Meal> availableMeals;
 
   @override
@@ -27,7 +22,7 @@ class CategoryScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return CategoryItem(
             category: availableCategories[index],
-            onToggleFavorite: onToggleFavorite,
+            onToggleFavorite: (meal) {},
             availableMeals: availableMeals,
           );
         },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_challenge/Providers/favotites_provider.dart';
 import 'package:flutter_challenge/Providers/meals_provider.dart';
 import 'package:flutter_challenge/models/meal.dart';
 import 'package:flutter_challenge/screens/category_screen.dart';
@@ -23,7 +24,6 @@ class TabsScrean extends ConsumerStatefulWidget {
 
 class _TabsScreanState extends ConsumerState<TabsScrean> {
   int _selectedPageIndex = 0;
-  final List<Meal> _favoriteMeals = [];
 
   Map<Filter, bool> _selectedFilters = {
     Filter.glutenFree: false,
@@ -31,13 +31,6 @@ class _TabsScreanState extends ConsumerState<TabsScrean> {
     Filter.vegan: false,
     Filter.vegeterian: false,
   };
-
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
 
   void _setScreen(String identifier) {
     // First close the drawer before changing the screen
@@ -86,16 +79,11 @@ class _TabsScreanState extends ConsumerState<TabsScrean> {
           return true;
         }).toList();
     // Set the active page based on the selected index
-    Widget activePage = CategoryScreen(
-      onToggleFavorite: _toggleFavorite,
-      availableMeals: availableMeals,
-    );
+    Widget activePage = CategoryScreen(availableMeals: availableMeals);
     var activePageTitle = 'Pick Your Category';
     if (_selectedPageIndex == 1) {
-      activePage = MealsScreen(
-        meals: _favoriteMeals,
-        onToggleFavorite: _toggleFavorite,
-      );
+      final List<Meal> favoriteMeals = ref.watch(favoriteMealsProvider);
+      activePage = MealsScreen(meals: favoriteMeals);
       activePageTitle = 'Favorites';
     }
     return Scaffold(
