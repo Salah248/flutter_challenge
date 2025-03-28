@@ -58,22 +58,6 @@ class _TabsScreanState extends ConsumerState<TabsScrean> {
     }
   }
 
-  void _toggleFavorite(Meal meal) {
-    // Check if the meal is already a favorite
-    final isExisting = _favoriteMeals.contains(meal);
-    if (isExisting) {
-      setState(() {
-        _favoriteMeals.remove(meal);
-      });
-      _showInfoMessage('Meal is no longer a favorite.');
-    } else {
-      setState(() {
-        _favoriteMeals.add(meal);
-      });
-      _showInfoMessage('Marked as a favorite.');
-    }
-  }
-
   void _selectPage(int index) {
     setState(() {
       _selectedPageIndex = index;
