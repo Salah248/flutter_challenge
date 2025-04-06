@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_challenge/screens/tabs_screan.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         textTheme: GoogleFonts.latoTextTheme(),
       ),
-      home: const TabsScrean(),
+      home: const Placeholder(),
     );
   }
 }
