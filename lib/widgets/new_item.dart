@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/data/categories.dart';
 import 'package:flutter_challenge/models/category.dart';
 import 'package:flutter_challenge/models/grocery_item.dart';
+import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -15,6 +18,43 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = '';
   var _enteredQuantity = 0;
   var _selectedCategory = categories[Categories.fruit]!;
+  // this variable will be used to show a loading indicator when the user is adding a new item
+  bool _isLoading = false;
+
+  void _saveItem(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
+      final uri = Uri.parse(
+        'https://flutter-test-dcb77-default-rtdb.firebaseio.com/shopping-list.json',
+      );
+      http
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'name': _enteredName,
+              'quantity': _enteredQuantity,
+              'category': _selectedCategory.name,
+            }),
+          )
+          .then((response) {
+            if (response.statusCode == 200 && context.mounted) {
+              Navigator.of(context).pop(
+                GroceryItem(
+                  id: json.decode(response.body)['name'],
+                  name: _enteredName,
+                  quantity: _enteredQuantity,
+                  category: _selectedCategory,
+                ),
+              );
+            }
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +70,6 @@ class _NewItemState extends State<NewItem> {
                 style: const TextStyle(fontSize: 16, color: Colors.white),
                 onSaved: (newValue) {
                   // Save the name of the item
-
                   _enteredName = newValue!;
                 },
                 validator: (value) {
@@ -53,7 +92,6 @@ class _NewItemState extends State<NewItem> {
                       keyboardType: TextInputType.number,
                       onSaved: (newValue) {
                         // Save the quantity of the item
-
                         _enteredQuantity = int.parse(newValue!);
                       },
                       initialValue: '1',
@@ -105,29 +143,28 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {
-                      _formKey.currentState?.reset();
-                    },
+                    onPressed:
+                        _isLoading
+                            ? null
+                            : () {
+                              _formKey.currentState?.reset();
+                            },
                     child: const Text('Reset'),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        Navigator.pop(
-                          context,
-                          // Pass the Data of the new item to the previous screen
-                          GroceryItem(
-                            id: DateTime.now().toString(),
-                            name: _enteredName,
-                            quantity: _enteredQuantity,
-                            category: _selectedCategory,
-                          ),
-                        );
-                      }
-                    },
-                    child: const Text('Add Item'),
+                    onPressed: () => _isLoading ? null : _saveItem(context),
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Text('Add Item'),
                   ),
                   const SizedBox(width: 12),
                 ],
