@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/models/place.dart';
+import 'package:flutter_challenge/screens/places_details.dart';
 
 class PlacesList extends StatelessWidget {
   const PlacesList({super.key, required this.places});
@@ -21,6 +22,13 @@ class PlacesList extends StatelessWidget {
           itemCount: places.length,
           itemBuilder: (context, index) {
             return ListTile(
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlacesDetails(place: places[index]),
+                    ),
+                  ),
               title: Text(
                 places[index].name,
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(

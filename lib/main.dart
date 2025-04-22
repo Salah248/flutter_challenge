@@ -9,7 +9,7 @@ void main() {
 
 final ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 99, 8, 246),
-  surface: const Color.fromARGB(255, 21, 24, 37),
+  surface: const Color.fromARGB(255, 57, 47, 68),
   brightness: Brightness.dark,
 );
 

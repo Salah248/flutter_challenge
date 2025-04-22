@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_challenge/Providers/user_places.dart';
+import 'package:flutter_challenge/models/place.dart';
+import 'package:flutter_challenge/screens/add_place.dart';
 import 'package:flutter_challenge/widgets/places_list.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Places extends StatefulWidget {
+class Places extends ConsumerWidget {
   const Places({super.key});
 
   @override
-  State<Places> createState() => _PlacesState();
-}
-
-class _PlacesState extends State<Places> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<Place> userPlace = ref.watch(userPlacesProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Places'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.add))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddPlace()),
+              );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
-      body: const PlacesList(places: []),
+      body: PlacesList(places: userPlace),
     );
   }
 }
