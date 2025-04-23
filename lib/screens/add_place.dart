@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/Providers/user_places.dart';
+import 'package:flutter_challenge/widgets/image_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddPlace extends ConsumerStatefulWidget {
@@ -11,14 +14,14 @@ class AddPlace extends ConsumerStatefulWidget {
 
 class _AddPlaceState extends ConsumerState<AddPlace> {
   final TextEditingController _nameController = TextEditingController();
-
+  File? _selectedImage;
   _savePlace() {
     final name = _nameController.text;
-    if (name.isEmpty) {
+    if (name.isEmpty || _selectedImage == null) {
       return;
     }
 
-    ref.read(userPlacesProvider.notifier).addPlace(name);
+    ref.read(userPlacesProvider.notifier).addPlace(name, _selectedImage!);
     Navigator.pop(context);
   }
 
@@ -37,6 +40,12 @@ class _AddPlaceState extends ConsumerState<AddPlace> {
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
+            ),
+            const SizedBox(height: 16),
+            ImageInput(
+              onImageSelected: (image) {
+                _selectedImage = image;
+              },
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(

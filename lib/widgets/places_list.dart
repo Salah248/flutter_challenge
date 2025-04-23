@@ -35,6 +35,10 @@ class PlacesList extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
+              leading: CircleAvatar(
+                radius: 16,
+                backgroundImage: FileImage(places[index].image),
+              ),
             );
           },
         );
