@@ -39,6 +39,12 @@ class PlacesList extends StatelessWidget {
                 radius: 16,
                 backgroundImage: FileImage(places[index].image),
               ),
+              subtitle: Text(
+                places[index].location.address,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             );
           },
         );

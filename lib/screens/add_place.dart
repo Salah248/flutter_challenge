@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/Providers/user_places.dart';
+import 'package:flutter_challenge/models/place.dart';
 import 'package:flutter_challenge/widgets/image_input.dart';
+import 'package:flutter_challenge/widgets/location_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddPlace extends ConsumerStatefulWidget {
@@ -15,13 +17,16 @@ class AddPlace extends ConsumerStatefulWidget {
 class _AddPlaceState extends ConsumerState<AddPlace> {
   final TextEditingController _nameController = TextEditingController();
   File? _selectedImage;
+  PlaceLocation? _placeLocation;
   _savePlace() {
     final name = _nameController.text;
-    if (name.isEmpty || _selectedImage == null) {
+    if (name.isEmpty || _selectedImage == null || _placeLocation == null) {
       return;
     }
 
-    ref.read(userPlacesProvider.notifier).addPlace(name, _selectedImage!);
+    ref
+        .read(userPlacesProvider.notifier)
+        .addPlace(name, _selectedImage!, _placeLocation!);
     Navigator.pop(context);
   }
 
@@ -45,6 +50,12 @@ class _AddPlaceState extends ConsumerState<AddPlace> {
             ImageInput(
               onImageSelected: (image) {
                 _selectedImage = image;
+              },
+            ),
+            const SizedBox(height: 16),
+            LocationInput(
+              onSelectLocation: (PlaceLocation location) {
+                _placeLocation = location;
               },
             ),
             const SizedBox(height: 16),

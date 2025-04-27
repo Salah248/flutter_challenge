@@ -26,6 +26,7 @@ class _ImageInputState extends State<ImageInput> {
     setState(() {
       _selectedImage = File(pickedImage.path);
     });
+
     widget.onImageSelected(_selectedImage);
   }
 
@@ -48,7 +49,7 @@ class _ImageInputState extends State<ImageInput> {
       );
     }
     return Container(
-      height: 150,
+      height: 200,
       width: double.infinity,
       alignment: Alignment.center,
       decoration: BoxDecoration(
