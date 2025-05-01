@@ -5,11 +5,24 @@ import 'package:flutter_challenge/screens/add_place.dart';
 import 'package:flutter_challenge/widgets/places_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Places extends ConsumerWidget {
+class Places extends ConsumerStatefulWidget {
   const Places({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Places> createState() => _PlacesState();
+}
+
+class _PlacesState extends ConsumerState<Places> {
+  late Future<void> _placesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _placesFuture = ref.read(userPlacesProvider.notifier).loadPlaces();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final List<Place> userPlace = ref.watch(userPlacesProvider);
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +41,22 @@ class Places extends ConsumerWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: PlacesList(places: userPlace),
+        child: FutureBuilder(
+          future: _placesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return PlacesList(
+                onDismissed:
+                    (direction, place) => ref
+                        .read(userPlacesProvider.notifier)
+                        .removePlace(place),
+                places: userPlace,
+              );
+            }
+          },
+        ),
       ),
     );
   }
