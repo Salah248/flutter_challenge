@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_challenge/screens/places.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: colorScheme.surface,
         colorScheme: colorScheme,
       ),
-      home: const Places(),
+      home: Scaffold(),
     );
   }
 }
