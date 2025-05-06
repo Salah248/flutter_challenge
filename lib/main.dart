@@ -1,16 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_challenge/firebase_options.dart';
+import 'package:flutter_challenge/screens/auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
+  // Since I made main async, I need to call WidgetsFlutterBinding.ensureInitialized()
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const ProviderScope(child: MyApp()));
 }
-
-final ColorScheme colorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 99, 8, 246),
-  surface: const Color.fromARGB(255, 57, 47, 68),
-  brightness: Brightness.dark,
-);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,16 +18,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true).copyWith(
-        textTheme: GoogleFonts.ubuntuCondensedTextTheme().copyWith(
-          titleLarge: GoogleFonts.ubuntuCondensed(fontWeight: FontWeight.bold),
-          titleMedium: GoogleFonts.ubuntuCondensed(fontWeight: FontWeight.bold),
-          titleSmall: GoogleFonts.ubuntuCondensed(fontWeight: FontWeight.bold),
-        ),
-        scaffoldBackgroundColor: colorScheme.surface,
-        colorScheme: colorScheme,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Scaffold(),
+      home: const AuthScreen(),
     );
   }
 }
