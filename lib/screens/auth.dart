@@ -1,7 +1,13 @@
-import 'dart:developer';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_challenge/widgets/user_image.dart';
 
 // Initialize Firebase Auth
 final _firebase = FirebaseAuth.instance;
@@ -18,29 +24,60 @@ class _AuthScreenState extends State<AuthScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var _enteredEmail = '';
   var _enteredPassword = '';
-
+  var _enteredUsername = '';
+  File? _image; // 👈 إضافة متغير الصورة هنا
+  var _isUploading = false;
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
-    if (isValid) {
-      FocusScope.of(context).unfocus(); // 👈 إغلاق الكيبورد هنا
-      _formKey.currentState!.save();
-      log('$_enteredEmail $_enteredPassword');
+    if (!isValid || (_image == null && !_isLogin)) {
+      return;
     }
-    if (_isLogin) {
-    } else {
-      try {
-        final userCredential = await _firebase.createUserWithEmailAndPassword(
+
+    FocusScope.of(context).unfocus();
+    _formKey.currentState!.save();
+
+    try {
+      setState(() {
+        _isUploading = true;
+      });
+      if (_isLogin) {
+        final userCredntial = await _firebase.signInWithEmailAndPassword(
           email: _enteredEmail,
           password: _enteredPassword,
         );
-      } on FirebaseAuthException catch (e) {
-        log(e.toString());
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Error creating user')),
+      } else {
+        final userCredntial = await _firebase.createUserWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
         );
+
+        // الكود شغال بس المشكله في ان ال
+        //firebase storage مش شغال
+        // ده بسبب انه مدفوع
+
+        // Upload the image to Firebase Storage
+        // final storageRef = FirebaseStorage.instance
+        //     .ref()
+        //     .child('user_image')
+        //     .child("${userCredntial.user!.uid}.jpg");
+        // await storageRef.putFile(_image!);
+        // final imageUrl = await storageRef.getDownloadURL();
+        // log(imageUrl);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredntial.user!.uid)
+            .set({'username': _enteredUsername, 'email': _enteredEmail});
       }
+    } on FirebaseAuthException catch (e) {
+      log(e.toString());
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Error creating user')),
+      );
     }
+    setState(() {
+      _isUploading = false;
+    });
   }
 
   @override
@@ -71,6 +108,11 @@ class _AuthScreenState extends State<AuthScreen> {
                       key: _formKey,
                       child: Column(
                         children: [
+                          if (!_isLogin)
+                            UserImage(
+                              imagePickFn:
+                                  (pickedImage) => _image = pickedImage,
+                            ),
                           TextFormField(
                             onSaved: (newValue) => _enteredEmail = newValue!,
                             validator: (value) {
@@ -103,35 +145,54 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             obscureText: true,
                           ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.primaryContainer,
-
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 8,
+                          if (!_isLogin)
+                            TextFormField(
+                              onSaved:
+                                  (newValue) => _enteredUsername = newValue!,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.trim().isEmpty ||
+                                    value.length < 4) {
+                                  return 'Username must be at least 4 characters long';
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Username',
                               ),
                             ),
-                            child: Text(_isLogin ? 'Login' : 'Sign Up'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
+                          const SizedBox(height: 10),
+                          if (_isUploading) const CircularProgressIndicator(),
+                          if (!_isUploading)
+                            ElevatedButton(
+                              onPressed: _submit,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
 
-                            child: Text(
-                              _isLogin
-                                  ? 'Create new account'
-                                  : 'I already have an account',
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 8,
+                                ),
+                              ),
+                              child: Text(_isLogin ? 'Login' : 'Sign Up'),
                             ),
-                          ),
+                          if (!_isUploading)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+
+                              child: Text(
+                                _isLogin
+                                    ? 'Create new account'
+                                    : 'I already have an account',
+                              ),
+                            ),
                         ],
                       ),
                     ),
