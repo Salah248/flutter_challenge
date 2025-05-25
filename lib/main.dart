@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_challenge/screens/BMI.dart';
+import 'package:flutter_challenge/screens/home_bage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
@@ -15,15 +15,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: Colors.teal,
-        ),
-        textTheme: const TextTheme(
-          headlineMedium: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-        ),
+        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFF00061a),
+        shadowColor: const Color(0xFF001456),
+        splashColor: const Color(0xFF4169e8),
+        brightness: Brightness.dark,
       ),
-      home: const BmiScreen(),
+      home: const HomeScreen(),
     );
   }
 }

@@ -50,7 +50,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "asset/images/bmi.png"
+  image_path: "asset/images/favpng_e6b43377ba726388f53fda16eed34176.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
