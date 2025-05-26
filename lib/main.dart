@@ -20,7 +20,12 @@ class MyApp extends StatelessWidget {
         shadowColor: const Color(0xFF001456),
         splashColor: const Color(0xFF4169e8),
         brightness: Brightness.dark,
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white, fontSize: 28),
+          bodyLarge: TextStyle(color: Colors.white, fontSize: 52),
+        ),
       ),
+
       home: const HomeScreen(),
     );
   }
