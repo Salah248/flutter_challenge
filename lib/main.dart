@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/screens/home_bage.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Tic Tac Toe',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
